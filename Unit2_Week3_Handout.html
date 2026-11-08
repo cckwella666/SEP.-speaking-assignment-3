@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Unit 2 · Week 3 — Should Pets Be Allowed Everywhere?</title>
+<style>
+  :root{
+    --primary:#3d2c56;
+    --shadow-c:#0d9488; --shadow-bg:#e6f7f5;
+    --debate-c:#c2410c; --debate-bg:#fdece0;
+    --spon-c:#b45309; --spon-bg:#fdf3e0;
+    --hw-c:#15803d; --hw-bg:#e8f5ec;
+    --notes-c:#7c3aed; --notes-bg:#f5f0fe;
+    --bg:#f8f9fa; --card:#ffffff; --text:#2c3e50; --muted:#7f8c8d;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:16px;}
+  header{background:var(--primary);color:#fff;padding:30px 20px 22px;text-align:center;}
+  .pips{display:flex;justify-content:center;gap:8px;margin-bottom:10px;}
+  .pip{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3);}
+  .pip.active{background:var(--notes-c);width:26px;border-radius:6px;}
+  header h1{margin:6px 0 4px;font-size:1.6em;}
+  header p{margin:0;color:#e6ddf5;font-size:1em;}
+  .wrap{max-width:800px;margin:0 auto;padding:22px 16px 60px;}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px;}
+  .legend span{font-size:0.95em;font-weight:600;padding:5px 12px;border-radius:14px;}
+  .card{background:var(--card);border-radius:12px;padding:22px 24px;margin-bottom:20px;box-shadow:0 1px 5px rgba(0,0,0,0.08);border-left:6px solid;}
+  .card.shadow{border-color:var(--shadow-c);}
+  .card.debate{border-color:var(--debate-c);}
+  .card.spon{border-color:var(--spon-c);}
+  .card.hw{border-color:var(--hw-c);background:var(--hw-bg);}
+  .card h2{margin:0 0 4px;font-size:1.3em;}
+  .card.shadow h2{color:var(--shadow-c);}
+  .card.debate h2{color:var(--debate-c);}
+  .card.spon h2{color:var(--spon-c);}
+  .card.hw h2{color:var(--hw-c);}
+  .subtitle{color:var(--muted);font-size:0.95em;margin-bottom:14px;}
+  .voicebox{background:#eef6fb;border:1px dashed var(--shadow-c);border-radius:8px;padding:10px 14px;font-size:0.95em;color:var(--primary);margin-bottom:14px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+  select{padding:5px 8px;border-radius:6px;border:1px solid #ccc;font-size:0.95em;}
+  button.play{background:var(--shadow-c);color:#fff;border:none;padding:9px 18px;border-radius:7px;cursor:pointer;font-size:1em;margin-bottom:14px;font-weight:600;}
+  button.play:hover{filter:brightness(1.1);}
+  .script{background:var(--shadow-bg);border-radius:8px;padding:16px 18px;font-size:1.05em;line-height:1.7;}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+  .step{background:#fff;border:1px solid #dde7ee;border-radius:8px;padding:10px 12px;font-size:0.95em;text-align:center;}
+  .step .n{display:block;font-size:1.3em;font-weight:700;color:var(--shadow-c);margin-bottom:4px;}
+  .banner{border-radius:8px;padding:12px 16px;font-weight:600;font-size:1em;margin-bottom:14px;}
+  .banner.debate{background:var(--debate-bg);color:#9a3412;}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 4px;}
+  .chip{background:#fff;border:1px solid var(--debate-c);color:var(--debate-c);font-size:0.9em;padding:4px 11px;border-radius:14px;}
+  .twist{background:#fff;border-left:4px solid var(--debate-c);padding:10px 14px;border-radius:6px;font-size:1em;margin-top:10px;}
+  .cue-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px;}
+  @media(max-width:560px){.cue-grid,.steps{grid-template-columns:1fr;}}
+  .cue{background:var(--spon-bg);border:1px dashed var(--spon-c);border-radius:8px;padding:12px;font-size:1em;}
+  .hwlist label{display:flex;align-items:center;gap:10px;background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:1em;cursor:pointer;}
+  .hwlist input{width:18px;height:18px;}
+  .footer-note{text-align:center;color:var(--muted);font-size:0.9em;margin-top:26px;}
+
+  mark{border-radius:3px;padding:0 1px;}
+  mark.plain-highlight{cursor:pointer;}
+  #selPopup{position:absolute;z-index:1000;background:var(--primary);color:#fff;border:none;padding:7px 14px;border-radius:16px;font-size:0.85em;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:none;}
+
+  /* Highlighter toolbar */
+  .hl-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .hl-toolbar span.lbl{font-size:0.9em;color:var(--muted);}
+  .hl-swatch{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #ccc;cursor:pointer;display:inline-block;}
+  .hl-swatch.armed{box-shadow:0 0 0 3px #333;}
+  .hl-clear{background:#fff;border:1px solid #ccc;border-radius:6px;padding:5px 12px;font-size:0.85em;cursor:pointer;}
+
+  /* Vocab flip cards */
+  .vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:10px;}
+  .vcard{perspective:800px;height:120px;cursor:pointer;}
+  .vcard-inner{position:relative;width:100%;height:100%;transition:transform 0.5s;transform-style:preserve-3d;}
+  .vcard.flipped .vcard-inner{transform:rotateY(180deg);}
+  .vface{position:absolute;inset:0;backface-visibility:hidden;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;}
+  .vfront{background:#fff;border:2px solid var(--debate-c);color:var(--debate-c);font-weight:700;font-size:1.05em;}
+  .vback{background:var(--debate-c);color:#fff;transform:rotateY(180deg);font-size:0.85em;line-height:1.4;}
+
+  /* Additional Notes card */
+  .card.vocab{border-color:var(--notes-c);}
+  .card.vocab h2{color:var(--notes-c);}
+  .card.vocab textarea{width:100%;min-height:110px;border:1px solid #dde7ee;border-radius:8px;padding:10px;font-size:1em;font-family:inherit;resize:vertical;margin:8px 0 4px;}
+
+  /* Top save bar */
+  .toolbar-top{position:sticky;top:0;z-index:500;background:#fff;border-bottom:1px solid #e3e7ea;padding:10px 16px;display:flex;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.08);}
+  .pdf-btn-top{background:var(--notes-c);color:#fff;border:none;padding:11px 24px;border-radius:8px;cursor:pointer;font-size:1em;font-weight:700;}
+  .pdf-btn-top:hover{filter:brightness(1.08);}
+
+  /* Page layout: main column + comments rail */
+  .page{display:flex;gap:22px;max-width:1080px;margin:0 auto;align-items:flex-start;padding:22px 16px 60px;}
+  .main-col{flex:1;min-width:0;max-width:760px;}
+  .comments-col{width:250px;flex-shrink:0;position:sticky;top:70px;max-height:85vh;overflow-y:auto;background:var(--notes-bg);border:1px solid #ded0f7;border-radius:10px;padding:14px;}
+  .comments-header{font-weight:700;color:var(--primary);margin-bottom:10px;font-size:1em;}
+  .comments-empty{color:var(--muted);font-size:0.85em;font-style:italic;}
+  .comment-card{background:#fff;border:1px solid #e2d3fa;border-left:4px solid var(--notes-c);border-radius:8px;padding:10px 12px;margin-bottom:12px;transition:box-shadow 0.3s;}
+  .comment-card.flash{box-shadow:0 0 0 3px var(--notes-c);}
+  .comment-quote{font-size:0.85em;color:#5b21b6;font-style:italic;margin-bottom:6px;}
+  .comment-card input{width:100%;padding:6px 8px;border:1px solid #dde7ee;border-radius:6px;font-size:0.9em;font-family:inherit;margin-bottom:6px;}
+  .comment-remove{background:none;border:none;color:#c0392b;font-size:0.8em;cursor:pointer;padding:0;}
+  @media(max-width:960px){
+    .page{flex-direction:column;}
+    .comments-col{width:100%;position:static;max-height:none;}
+  }
+  .print-area{display:none;}
+  @media print{
+    body > *:not(.print-area){display:none !important;}
+    .print-area{display:block !important;padding:10px;}
+    .print-area h4{color:var(--primary);margin-bottom:4px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="pips"><span class="pip"></span><span class="pip"></span><span class="pip active"></span><span class="pip"></span></div>
+  <h1>Week 3: Should Pets Be Allowed Everywhere?</h1>
+  <p>Unit 2 — Reading, Debate &amp; Spontaneous Speaking</p>
+</header>
+
+<div class="toolbar-top">
+  <button class="pdf-btn-top" onclick="saveNotesPDF()">🖨️ Save My Notes as PDF</button>
+</div>
+
+<div class="page">
+<div class="main-col">
+
+  <div class="legend">
+    <span style="background:var(--shadow-bg);color:var(--shadow-c);">📖 Reading</span>
+    <span style="background:var(--debate-bg);color:var(--debate-c);">⚖️ Debate</span>
+    <span style="background:var(--spon-bg);color:var(--spon-c);">⚡ Spontaneous</span>
+    <span style="background:var(--hw-bg);color:var(--hw-c);">📝 Homework</span>
+  </div>
+
+  <!-- SHADOWING -->
+  <div class="card shadow">
+    <h2>📖 Reading Practice</h2>
+    <p class="subtitle">Try reading this one a little faster than before — push your pace a bit.</p>
+    <div class="hl-toolbar">
+      <span class="lbl">🖍️ Pick a color, then drag over text to highlight it:</span>
+      <span class="hl-swatch" style="background:#fff59d;" onclick="armHighlight('#fff59d',this)"></span>
+      <span class="hl-swatch" style="background:#a5d6a7;" onclick="armHighlight('#a5d6a7',this)"></span>
+      <span class="hl-swatch" style="background:#90caf9;" onclick="armHighlight('#90caf9',this)"></span>
+      <span class="hl-swatch" style="background:#f48fb1;" onclick="armHighlight('#f48fb1',this)"></span>
+      <button class="hl-clear" onclick="clearAllHighlights()">Clear all</button>
+    </div>
+    <p class="subtitle" style="margin-top:-2px;">After highlighting, a 💬 Add note button appears so you can write down what it means.</p>
+    <div class="script" id="script1">More and more cafes, and even some offices, are starting to allow pets inside. For a lot of people, this is wonderful news. Having a dog nearby can lower stress and make the day feel less lonely. Pet owners often say their animals are calm and well-trained, so there's no real problem. But not everyone agrees. Some people are allergic to animals, and some just don't feel comfortable around dogs or cats. There are also questions about hygiene, especially in places where food is served. So here's the question: should more places open their doors to pets, or is it better to keep some spaces animal-free?</div>
+    <div class="steps">
+      <div class="step"><span class="n">1</span>Read once, notice how the ideas connect.</div>
+      <div class="step"><span class="n">2</span>Read again and highlight new words or linking phrases.</div>
+      <div class="step"><span class="n">3</span>Repeat until it feels smooth, not choppy.</div>
+    </div>
+  </div>
+
+  <!-- ADDITIONAL NOTES -->
+  <div class="card vocab">
+    <h2>📝 Additional Notes</h2>
+    <p class="subtitle">Anything else you want to remember — questions, sentences, ideas. Your word meanings from the side panel are saved automatically into the PDF too.</p>
+    <textarea id="notesArea" placeholder="Write anything else here..."></textarea>
+  </div>
+
+  <!-- DEBATE -->
+  <div class="card debate">
+    <h2>⚖️ Debate Challenge — Cold Start</h2>
+    <p class="subtitle">Motion: <strong>"Pets should be allowed in more public places, like cafes and offices."</strong></p>
+    <div class="banner debate">Your position: choose in class &nbsp;|&nbsp; Prep time: 0 minutes (cold)</div>
+    <p>You'll receive this motion with no advance notice in class. You'll have 90 seconds to decide your position, then go straight into a <strong>3-round live rebuttal exchange</strong> with your teacher.</p>
+    <p><strong>Key vocabulary (study these before class — you won't have prep time for content)</strong></p>
+    <div class="vocab-grid">
+      <div class="vcard" onclick="this.classList.toggle('flipped')"><div class="vcard-inner">
+        <div class="vface vfront">allowed</div>
+        <div class="vface vback">被允許的<br><em>Dogs are allowed in this cafe.</em></div>
+      </div></div>
+      <div class="vcard" onclick="this.classList.toggle('flipped')"><div class="vcard-inner">
+        <div class="vface vfront">comfort</div>
+        <div class="vface vback">安慰；舒適<br><em>Pets can bring comfort to lonely people.</em></div>
+      </div></div>
+      <div class="vcard" onclick="this.classList.toggle('flipped')"><div class="vcard-inner">
+        <div class="vface vfront">hygiene</div>
+        <div class="vface vback">衛生<br><em>Hygiene is important in restaurants.</em></div>
+      </div></div>
+      <div class="vcard" onclick="this.classList.toggle('flipped')"><div class="vcard-inner">
+        <div class="vface vfront">distraction</div>
+        <div class="vface vback">分心的事物<br><em>A noisy pet can be a distraction at work.</em></div>
+      </div></div>
+      <div class="vcard" onclick="this.classList.toggle('flipped')"><div class="vcard-inner">
+        <div class="vface vfront">companion</div>
+        <div class="vface vback">陪伴者<br><em>A dog is a loyal companion.</em></div>
+      </div></div>
+      <div class="vcard" onclick="this.classList.toggle('flipped')"><div class="vcard-inner">
+        <div class="vface vfront">policy</div>
+        <div class="vface vback">政策<br><em>The office changed its pet policy this year.</em></div>
+      </div></div>
+    </div>
+    <div class="twist">🎯 <strong>Goal this week:</strong> it's okay not to have a perfect answer ready. Practice staying in the exchange — try phrases like "That's a fair point, but…" to buy yourself a second to think, instead of going silent.</div>
+  </div>
+
+  <!-- SPONTANEOUS -->
+  <div class="card spon">
+    <h2>⚡ Spontaneous Speaking (no prep!)</h2>
+    <p class="subtitle">Pick one card. Speak for 60–90 seconds. No planning time — just talk.</p>
+    <div class="cue-grid">
+      <div class="cue">Describe a pet you've had or wanted.</div>
+      <div class="cue">Talk about a time an animal made you feel better.</div>
+      <div class="cue">Describe a public place where you saw an animal.</div>
+      <div class="cue">Talk about whether you'd bring a pet to work.</div>
+    </div>
+  </div>
+
+  <!-- HOMEWORK -->
+  <div class="card hw">
+    <h2>📝 This Week's Homework</h2>
+    <div class="hwlist">
+      <label><input type="checkbox"> Read the passage 3x daily — try reading a little faster each time</label>
+      <label><input type="checkbox"> Review the vocabulary list (no debate prep — the motion is a surprise in class)</label>
+      <label><input type="checkbox"> Record one Spontaneous Speaking card, no rehearsal, and send it to your teacher</label>
+    </div>
+  </div>
+
+  <p class="footer-note">Unit 2 · Week 3 of 4 · Ann's Everyday English Speaking Series</p>
+</div>
+
+<div class="comments-col" id="commentsCol">
+  <div class="comments-header">💬 Word Notes</div>
+  <div id="commentsList">
+    <p class="comments-empty" id="commentsEmpty">Select a word in the passage and click "+ Add note" to write its meaning here.</p>
+  </div>
+</div>
+
+</div>
+
+<div class="print-area" id="printArea">
+  <h2 id="printTitle"></h2>
+  <div id="printMirror"></div>
+</div>
+
+<script>
+  // --- Highlighter (choose color, drag to highlight) + optional Add Note ---
+  let commentCount = 0;
+  const originalScript1 = document.getElementById('script1') ? document.getElementById('script1').innerHTML : '';
+  let armedColor = null;
+  let pendingMark = null;
+  let pendingText = '';
+
+  function armHighlight(color, el){
+    armedColor = (armedColor === color) ? null : color;
+    document.querySelectorAll('.hl-swatch').forEach(s => s.classList.remove('armed'));
+    if(armedColor) el.classList.add('armed');
+  }
+
+  function clearAllHighlights(){
+    const scriptEl = document.getElementById('script1');
+    if(scriptEl) scriptEl.innerHTML = originalScript1;
+    const list = document.getElementById('commentsList');
+    if(list) list.innerHTML = '<p class="comments-empty" id="commentsEmpty">Select a word in the passage and click "+ Add note" to write its meaning here.</p>';
+    commentCount = 0;
+  }
+
+  const selPopup = document.createElement('button');
+  selPopup.id = 'selPopup';
+  selPopup.textContent = '💬 Add note';
+  document.body.appendChild(selPopup);
+  selPopup.addEventListener('mousedown', e => e.preventDefault());
+  selPopup.addEventListener('click', function(){
+    if(pendingMark) addCommentForMark(pendingMark, pendingText);
+    selPopup.style.display = 'none';
+  });
+  document.addEventListener('mousedown', function(e){
+    if(e.target !== selPopup) selPopup.style.display = 'none';
+  });
+
+  function applyHighlightOnSelection(){
+    if(!armedColor) return;
+    const sel = window.getSelection();
+    if(!sel.rangeCount || sel.isCollapsed) return;
+    const range = sel.getRangeAt(0);
+    const scriptEl = document.getElementById('script1');
+    if(!scriptEl || !scriptEl.contains(range.commonAncestorContainer)) return;
+    const text = sel.toString().trim();
+    if(!text) return;
+    const mark = document.createElement('mark');
+    mark.className = 'plain-highlight';
+    mark.style.backgroundColor = armedColor;
+    mark.title = 'Click to remove this highlight';
+    mark.onclick = function(e){
+      e.stopPropagation();
+      if(mark.dataset.commentId) focusComment(mark.dataset.commentId);
+      else unwrapMark(mark);
+    };
+    try{
+      range.surroundContents(mark);
+    }catch(err){
+      const contents = range.extractContents();
+      mark.appendChild(contents);
+      range.insertNode(mark);
+    }
+    sel.removeAllRanges();
+    showAddNoteButton(mark, text);
+  }
+  document.addEventListener('mouseup', applyHighlightOnSelection);
+
+  function showAddNoteButton(mark, text){
+    pendingMark = mark;
+    pendingText = text;
+    const rect = mark.getBoundingClientRect();
+    selPopup.style.display = 'block';
+    selPopup.style.top = (window.scrollY + rect.top - 40) + 'px';
+    selPopup.style.left = (window.scrollX + rect.left) + 'px';
+  }
+
+  function addCommentForMark(mark, text){
+    commentCount++;
+    const id = 'c' + commentCount;
+    mark.dataset.commentId = id;
+    mark.title = 'Click to jump to your note';
+    addCommentCard(id, text);
+  }
+
+  function unwrapMark(mark){
+    const parent = mark.parentNode;
+    while(mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+    parent.removeChild(mark);
+  }
+
+  function addCommentCard(id, text){
+    const emptyMsg = document.getElementById('commentsEmpty');
+    if(emptyMsg) emptyMsg.style.display = 'none';
+    const card = document.createElement('div');
+    card.className = 'comment-card';
+    card.id = 'comment-' + id;
+    card.innerHTML =
+      '<div class="comment-quote">"' + text.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '"</div>' +
+      '<input type="text" placeholder="Type the meaning here...">' +
+      '<button class="comment-remove" onclick="removeComment(\'' + id + '\')">Remove</button>';
+    document.getElementById('commentsList').appendChild(card);
+    card.querySelector('input').focus();
+  }
+
+  function focusComment(id){
+    const card = document.getElementById('comment-' + id);
+    if(!card) return;
+    card.scrollIntoView({behavior:'smooth', block:'center'});
+    card.classList.add('flash');
+    setTimeout(() => card.classList.remove('flash'), 900);
+  }
+
+  function removeComment(id){
+    const mark = document.querySelector('mark[data-comment-id="' + id + '"]');
+    if(mark){
+      const parent = mark.parentNode;
+      while(mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+      parent.removeChild(mark);
+    }
+    const card = document.getElementById('comment-' + id);
+    if(card) card.remove();
+    if(document.querySelectorAll('.comment-card').length === 0){
+      const emptyMsg = document.getElementById('commentsEmpty');
+      if(emptyMsg) emptyMsg.style.display = 'block';
+    }
+  }
+
+  function saveNotesPDF(){
+    const title = document.querySelector('header h1').innerText;
+    document.getElementById('printTitle').innerText = title;
+    const scriptEl = document.getElementById('script1');
+    const scriptHTML = scriptEl ? scriptEl.innerHTML : '';
+
+    let vocabHTML = '';
+    document.querySelectorAll('#commentsList .comment-card').forEach(card => {
+      const w = card.querySelector('.comment-quote').innerText.replace(/"/g,'');
+      const m = card.querySelector('input').value.trim() || '(no meaning written)';
+      vocabHTML += '<div style="margin-bottom:8px;"><strong>' + w + '</strong> — ' + m + '</div>';
+    });
+    if(!vocabHTML) vocabHTML = '<em>No vocabulary words added.</em>';
+
+    const notesRaw = document.getElementById('notesArea').value;
+    const notesHTML = notesRaw ? notesRaw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>') : '<em>No notes written.</em>';
+
+    document.getElementById('printMirror').innerHTML =
+      '<h4>Reading Passage (with your highlights)</h4><div style="line-height:1.8;margin-bottom:24px;">' + scriptHTML + '</div>' +
+      '<h4>My Vocabulary List</h4><div style="margin-bottom:24px;">' + vocabHTML + '</div>' +
+      '<h4>My Notes</h4><div style="line-height:1.7;">' + notesHTML + '</div>';
+    window.print();
+  }
+
+</script>
+
+</body>
+</html>
